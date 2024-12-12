@@ -4,7 +4,7 @@ Animated Textures using GIFs
 
 ## YouTube/Dropbox/Drive Link: 
 
-**Edit this line -- Put your link to your video(Preferably on YouTube) here (see deliverables)**
+https://youtu.be/wsKJCH_4xos
 
 ## Screenshots
 
