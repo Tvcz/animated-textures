@@ -26,7 +26,7 @@ Note: Credit goes to Mike Shah for most of the code in the repository. My change
 
 * Name and partners name(At most teams of 2 folks total)
   * Team member 1: Joseph Hirsch
-* How many hours did it take you to complete this final project? 25
+* How many hours did it take you to complete this final project? 27
 * Did you collaborate or share ideas with any other students/TAs/Professors?
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
