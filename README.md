@@ -27,8 +27,8 @@ Working Example using a small sample gif:
 * Did you collaborate or share ideas with any other students/TAs/Professors?
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
-  * https://giflib.sourceforge.net/whatsinagif/bits_and_bytes.html
-  * https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+  * GIF file format breakdown: https://giflib.sourceforge.net/whatsinagif/bits_and_bytes.html
+  * Official GIF spec (for the lastest format version): https://www.w3.org/Graphics/GIF/spec-gif89a.txt
   * (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
   * Building the state machine for loading the GIF. It was complicated and difficult, and slightly aggravating, but a great learning experience especially working with a binary file and the related operations (such as dealing with compressed codes for the color indices which are smaller than a byte). I think overall I am happy I chose to do this project as a result of everything I learned.
 
