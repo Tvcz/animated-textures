@@ -22,7 +22,7 @@ Result (gif):
 ![fire_chapel](https://github.com/user-attachments/assets/0ed8a3ff-c519-45e8-8d3b-a272e604a449)
 
 
-Note: Credit goes to Mike Shah for most of the code in the repository. My changes are primarily in the Image.cpp and Image.hpp files.
+Note: Credit goes to Mike Shah for most of the code in the repository. My changes are primarily in the `Image.cpp` and `Image.hpp` files.
 
 * Name and partners name(At most teams of 2 folks total)
   * Team member 1: Joseph Hirsch
