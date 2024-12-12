@@ -394,14 +394,14 @@ void VertexSpecification()
 	int numberOfFloatsPerVertex = 17;
 
 	// x,y,z positions
-	glVertexAttribPointer(0,					 // Attribute 0 corresponds to the enabled glEnableVertexAttribArray
-												 // In the future, you'll see in our vertex shader this also correspond
-												 // to (layout=0) which selects these attributes.
-						  3,					 // The number of components (e.g. x,y,z = 3 components)
-						  GL_FLOAT,				 // Type
-						  GL_FALSE,				 // Is the data normalized
+	glVertexAttribPointer(0,										  // Attribute 0 corresponds to the enabled glEnableVertexAttribArray
+																	  // In the future, you'll see in our vertex shader this also correspond
+																	  // to (layout=0) which selects these attributes.
+						  3,										  // The number of components (e.g. x,y,z = 3 components)
+						  GL_FLOAT,									  // Type
+						  GL_FALSE,									  // Is the data normalized
 						  sizeof(GL_FLOAT) * numberOfFloatsPerVertex, // Stride
-						  (void *)0				 // Offset
+						  (void *)0									  // Offset
 	);
 
 	// vertex colors
@@ -448,7 +448,6 @@ void VertexSpecification()
 						  GL_FALSE,
 						  sizeof(GL_FLOAT) * numberOfFloatsPerVertex,
 						  (void *)(sizeof(GL_FLOAT) * 14));
-
 
 	// Unbind our currently bound Vertex Array Object
 	glBindVertexArray(0);
@@ -871,7 +870,7 @@ void UpdateLightPositions()
  */
 void MainLoop()
 {
-
+	Uint32 last_time = SDL_GetTicks();
 	// Little trick to map mouse to center of screen always.
 	// Useful for handling 'mouselook'
 	// This works because we effectively 're-center' our mouse at the start
@@ -898,6 +897,12 @@ void MainLoop()
 		Draw();
 		// Update screen of our specified window
 		SDL_GL_SwapWindow(gGraphicsApplicationWindow);
+
+		if (SDL_GetTicks() - last_time >= 50)
+		{
+			gTexture.Refresh();
+			last_time = SDL_GetTicks();
+		}
 	}
 }
 

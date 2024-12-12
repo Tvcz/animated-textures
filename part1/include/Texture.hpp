@@ -31,6 +31,8 @@ public:
     void Bind(unsigned int slot = 0) const;
     // Be done with our texture
     void Unbind();
+    // sets up texture without loading a new file
+    void Refresh();
 
 private:
     // Store a unique ID for the texture

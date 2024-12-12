@@ -47,7 +47,7 @@ void Texture::LoadTexture(const std::string filepath)
     }
     else if (filepath.substr(filepath.find_last_of(".") + 1) == "gif")
     {
-        m_image->LoadGIF();
+        m_image->LoadGIF(true);
     }
     else
     {
@@ -55,6 +55,15 @@ void Texture::LoadTexture(const std::string filepath)
         return;
     }
 
+    Refresh();
+}
+void Texture::Refresh()
+{
+    if (m_image == nullptr)
+    {
+        std::cerr << "No image data to refresh" << std::endl;
+        return;
+    }
     glEnable(GL_TEXTURE_2D);
     // Generate a buffer for our texture
     glGenTextures(1, &m_textureID);

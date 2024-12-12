@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <SDL2/SDL_timer.h>
 
 // From Professor Shah's example code
 
@@ -24,7 +25,7 @@ struct Color
 
 struct Frame
 {
-    uint8_t *data;
+    std::vector<uint8_t> data;
     int width;
     int height;
     int color_resolution;
@@ -42,8 +43,9 @@ public:
     ~Image();
     // Loads a PPM from file.
     void LoadPPM(bool flip);
+    void flipData(uint8_t *data);
     // Loads a GIF from file.
-    void LoadGIF();
+    void LoadGIF(bool flip);
     // Return the width
     inline int GetWidth()
     {
@@ -92,6 +94,7 @@ private:
     void parseImageData(std::ifstream &stream);
     std::vector<uint8_t> mapIndexData(std::vector<uint8_t> data, std::vector<Color> color_table);
     std::vector<uint8_t> decompressLZW(std::vector<uint8_t> bytes, uint8_t lzw_min_code_size);
+    void updateFrame();
     // std::vector<uint16_t> bytesToCodes(std::vector<uint8_t> bytes, uint8_t lzw_min_code_size);
     uint16_t getNextCode(std::vector<uint8_t> bytes, int &bit_index, int cur_code_size);
     // Filepath to the image loaded
@@ -110,6 +113,8 @@ private:
     int m_next_delay_ms = 100;
     std::vector<Frame> m_frames;
     bool m_next_has_local_color_table;
+    u_int32_t m_last_refresh_time_ms = SDL_GetTicks();
+    int m_cur_frame_index = 0;
 };
 
 #endif

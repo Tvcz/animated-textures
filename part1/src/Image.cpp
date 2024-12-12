@@ -103,23 +103,27 @@ void Image::LoadPPM(bool flip)
     // Flip all of the pixels
     if (flip)
     {
-        // Copy all of the data to a temporary stack-allocated array
-        uint8_t *copyData = new uint8_t[m_width * m_height * 3];
-        for (int i = 0; i < m_width * m_height * 3; ++i)
-        {
-            copyData[i] = m_pixelData[i];
-        }
-        // memcpy(copyData,m_pixelData,(m_width*m_height*3)*sizeof(uint8_t));
-        unsigned int pos = (m_width * m_height * 3) - 1;
-        for (int i = 0; i < m_width * m_height * 3; i += 3)
-        {
-            m_pixelData[pos] = copyData[i + 2];
-            m_pixelData[pos - 1] = copyData[i + 1];
-            m_pixelData[pos - 2] = copyData[i];
-            pos -= 3;
-        }
-        delete[] copyData;
+        flipData(m_pixelData);
     }
+}
+
+void Image::flipData(uint8_t *data)
+{
+    // Copy all of the data to a temporary stack-allocated array
+    uint8_t *copyData = new uint8_t[m_width * m_height * 3];
+    for (int i = 0; i < m_width * m_height * 3; ++i)
+    {
+        copyData[i] = data[i];
+    }
+    unsigned int pos = (m_width * m_height * 3) - 1;
+    for (int i = 0; i < m_width * m_height * 3; i += 3)
+    {
+        data[pos] = copyData[i + 2];
+        data[pos - 1] = copyData[i + 1];
+        data[pos - 2] = copyData[i];
+        pos -= 3;
+    }
+    delete[] copyData;
 }
 
 enum class GifState
@@ -138,7 +142,7 @@ enum class GifState
     TRAILER
 };
 
-void Image::LoadGIF()
+void Image::LoadGIF(bool flip)
 {
     // Open an binary input file stream for reading a file
     std::ifstream file(m_filepath.c_str(), std::ios::binary);
@@ -224,8 +228,6 @@ void Image::LoadGIF()
             parseImageData(file);
             std::cout << "Successfully read image data.\n";
             state = GifState::CONTENT_BLOCK;
-            file.close();
-            return;
             break;
         case GifState::EXTENSION_BLOCK:
             std::cout << "Attempting to read extension block.\n";
@@ -293,6 +295,16 @@ void Image::LoadGIF()
     }
 
     file.close();
+
+    // Flip all of the pixels
+    if (flip)
+    {
+        for (Frame &frame : m_frames)
+        {
+            flipData(frame.data.data());
+        }
+    }
+
     return;
 }
 
@@ -391,7 +403,7 @@ void Image::parseImageData(std::ifstream &stream)
     std::vector<uint8_t> lzw_data;
     while (sub_block_size != 0x00)
     {
-        std::cout << "Read subblock of size " << (int)sub_block_size << "\n";
+        // std::cout << "Read subblock of size " << (int)sub_block_size << "\n";
         char *block = new char[sub_block_size];
         stream.read(block, sub_block_size);
         for (int i = 0; i < sub_block_size; i++)
@@ -412,7 +424,11 @@ void Image::parseImageData(std::ifstream &stream)
     std::cout << "Translated color index data to raw color data\n";
     std::cout << "Raw color data size: " << rawColorData.size() << " bytes\n";
     Frame &last_frame = m_frames.back();
-    last_frame.data = rawColorData.data();
+    last_frame.data = rawColorData;
+    if (last_frame.interlaced)
+    {
+        std::cerr << "Interlaced image, not implemented\n";
+    }
 }
 
 std::vector<uint8_t> Image::mapIndexData(std::vector<uint8_t> data, std::vector<Color> color_table)
@@ -451,7 +467,7 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
 
     std::cout << "Clear code: " << clear_code << ", End of info code: " << end_of_info_code << "\n";
 
-    std::cout << "Decompressing LZW data";
+    std::cout << "Decompressing LZW data" << std::endl;
     uint16_t read_clear_code = getNextCode(bytes, bit_index, cur_code_size);
     if (read_clear_code != clear_code)
     {
@@ -465,6 +481,7 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
     // std::cout << prev_code << " ";
     decompressed_data.insert(decompressed_data.end(), code_table[prev_code].begin(), code_table[prev_code].end());
 
+    bool just_reset = false;
     while (bit_index < bytes.size() * 8)
     {
         uint16_t curr_code = getNextCode(bytes, bit_index, cur_code_size);
@@ -474,18 +491,21 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
 
         if (curr_code == clear_code)
         {
-            std::cout << "Clear code encountered, resetting code table\n";
+            // std::cout << "Clear code encountered, resetting code table\n";
             code_table.clear();
             code_table.resize((1 << lzw_min_code_size) + 2, std::vector<uint8_t>());
             for (int i = 0; i < (1 << lzw_min_code_size); ++i)
             {
                 code_table[i] = {static_cast<uint8_t>(i)};
             }
+            cur_code_size = lzw_min_code_size + 1;
+            prev_code = getNextCode(bytes, bit_index, cur_code_size);
+            decompressed_data.insert(decompressed_data.end(), code_table[prev_code].begin(), code_table[prev_code].end());
             continue;
         }
         else if (curr_code == end_of_info_code)
         {
-            std::cout << "\nEnd of info code encountered, stopping decompression\n";
+            // std::cout << "End of info code encountered, stopping decompression\n";
             break;
         }
 
@@ -518,6 +538,8 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
 
         prev_code = curr_code;
     }
+    std::cout << "Total codes: " << code_table.size() << std::endl;
+
     return decompressed_data;
 }
 
@@ -541,6 +563,15 @@ uint16_t Image::getNextCode(std::vector<uint8_t> bytes, int &bit_index, int cur_
         throw std::runtime_error("Invalid code size encountered: " + std::to_string(code));
     }
     return code;
+}
+
+void Image::updateFrame()
+{
+    if (SDL_GetTicks() - m_last_refresh_time_ms > m_frames[m_cur_frame_index].delay_ms)
+    {
+        m_cur_frame_index = (m_cur_frame_index + 1) % m_frames.size();
+        m_last_refresh_time_ms = SDL_GetTicks();
+    }
 }
 
 /*  ===============================================
@@ -596,17 +627,17 @@ uint8_t *Image::GetPixelDataPtr()
     }
     else if (m_filepath.substr(m_filepath.find_last_of(".") + 1) == "gif")
     {
-        Frame last_frame = m_frames.back();
         std::cout << "Returning pixel data for a GIF" << std::endl;
-        std::cout << "Frame dimensions: " << last_frame.width << ", " << last_frame.height << std::endl;
-        for (int i = 0; i < last_frame.width * last_frame.height; i++)
-        {
-            int r = last_frame.data[i * 3];
-            int g = last_frame.data[i * 3 + 1];
-            int b = last_frame.data[i * 3 + 2];
-            std::cout << r << " " << g << " " << b << std::endl;
-        }
-        return last_frame.data;
+        // for (int i = 0; i < last_frame.width * last_frame.height; i++)
+        // {
+        //     int r = last_frame.data[i * 3];
+        //     int g = last_frame.data[i * 3 + 1];
+        //     int b = last_frame.data[i * 3 + 2];
+        //     std::cout << r << " " << g << " " << b << std::endl;
+        // }
+        updateFrame();
+        std::cout << "Current frame index: " << m_cur_frame_index << std::endl;
+        return m_frames[m_cur_frame_index].data.data();
     }
     else
     {
