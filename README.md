@@ -8,7 +8,7 @@ https://youtu.be/wsKJCH_4xos
 
 ## Screenshots
 
-Goal: Allow animated textures like the one below to be used in place of PPM images in the rendering pipeline we used for assignments.
+Goal: Add support for using animated GIFs in place of PPM images for OBJ model textures.
 ![chapel-ezgif com-optimize](https://github.com/user-attachments/assets/6e7c0dc5-cd10-4083-b548-f6d4b2bc3b17)
 
 Result (still frame):
