@@ -4,16 +4,18 @@ Animated Textures using GIFs
 
 ## YouTube/Dropbox/Drive Link: 
 
-https://youtu.be/wsKJCH_4xos
+https://youtu.be/vCkqORzZeyU
 
 ## Screenshots
 
-Goal: Allow animated textures like the one below to be used in place of PPM images in the rendering pipeline we used for assignments.
+Goal: Add support for using animated GIFs in place of PPM images for OBJ model textures.
 ![chapel-ezgif com-optimize](https://github.com/user-attachments/assets/6e7c0dc5-cd10-4083-b548-f6d4b2bc3b17)
 
 Result (still frame):
 
-![image](https://github.com/user-attachments/assets/5e795b65-f8fb-4525-97f8-6f0905f25f67)
+![image](https://github.com/user-attachments/assets/be7905d5-87cd-4a79-9f65-6567523ad406)
+![image](https://github.com/user-attachments/assets/6c906e8a-1707-4a05-937f-5389b1c3728e)
+
 
 Result (gif):
 
@@ -24,7 +26,7 @@ Note: Credit goes to Mike Shah for most of the code in the repository. My change
 
 * Name and partners name(At most teams of 2 folks total)
   * Team member 1: Joseph Hirsch
-* How many hours did it take you to complete this final project? 25
+* How many hours did it take you to complete this final project? 27
 * Did you collaborate or share ideas with any other students/TAs/Professors?
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
