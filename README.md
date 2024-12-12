@@ -20,7 +20,7 @@
 * Did you collaborate or share ideas with any other students/TAs/Professors?
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
-  * *edit this*
+  * GIF file format breakdown - https://giflib.sourceforge.net/whatsinagif/bits_and_bytes.html
   * *edit this*
   * *edit this*
   * (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
