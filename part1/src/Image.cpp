@@ -416,8 +416,6 @@ void Image::parseImageData(std::ifstream &stream)
     std::cout << "Encountered block terminator: " << (int)sub_block_size << "\n";
     std::cout << "LZW min code size: " << (int)lzw_min_code_size << "\n";
     std::cout << "LZW data size: " << lzw_data.size() << " bytes\n";
-    // std::vector<uint16_t> codes = bytesToCodes(lzw_data, lzw_min_code_size);
-    // std::cout << "Reinterpreted compressed LZW data, number of codes: " << codes.size() << " codes\n";
     std::vector<uint8_t> decompressed_data = decompressLZW(lzw_data, lzw_min_code_size);
     std::cout << "Decompressed data, result size: " << decompressed_data.size() << " color indices\n";
     std::vector<uint8_t> rawColorData = mapIndexData(decompressed_data, m_frames.back().color_table);
@@ -485,13 +483,9 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
     while (bit_index < bytes.size() * 8)
     {
         uint16_t curr_code = getNextCode(bytes, bit_index, cur_code_size);
-        // std::cout << curr_code << " ";
-
-        // std::cout << "Processing code: " << curr_code << ", size of decompressed_data: " << decompressed_data.size() << std::endl;
 
         if (curr_code == clear_code)
         {
-            // std::cout << "Clear code encountered, resetting code table\n";
             code_table.clear();
             code_table.resize((1 << lzw_min_code_size) + 2, std::vector<uint8_t>());
             for (int i = 0; i < (1 << lzw_min_code_size); ++i)
@@ -505,34 +499,28 @@ std::vector<uint8_t> Image::decompressLZW(std::vector<uint8_t> bytes, uint8_t lz
         }
         else if (curr_code == end_of_info_code)
         {
-            // std::cout << "End of info code encountered, stopping decompression\n";
             break;
         }
 
         if (curr_code < code_table.size())
         {
-            // std::cout << "Code " << curr_code << " in table, adding to decompressed data\n";
             decompressed_data.insert(decompressed_data.end(), code_table[curr_code].begin(), code_table[curr_code].end());
             int k = code_table[curr_code][0];
             std::vector<uint8_t> new_entry = code_table[prev_code];
             new_entry.push_back(k);
             code_table.push_back(new_entry);
-            // std::cout << "Added code " << code_table.size() - 1 << " to table\n";
         }
         else
         {
-            // std::cout << "Code " << curr_code << " not in table, adding to table\n";
             int k = code_table[prev_code][0];
             std::vector<uint8_t> new_entry = code_table[prev_code];
             new_entry.push_back(k);
             code_table.push_back(new_entry);
             decompressed_data.insert(decompressed_data.end(), new_entry.begin(), new_entry.end());
-            // std::cout << "Added code " << code_table.size() - 1 << " to table\n";
         }
 
         if (code_table.size() == (2 << (cur_code_size - 1)) && cur_code_size < max_code_size)
         {
-            // std::cout << "Code size increased\n";
             cur_code_size++;
         }
 
@@ -628,13 +616,6 @@ uint8_t *Image::GetPixelDataPtr()
     else if (m_filepath.substr(m_filepath.find_last_of(".") + 1) == "gif")
     {
         std::cout << "Returning pixel data for a GIF" << std::endl;
-        // for (int i = 0; i < last_frame.width * last_frame.height; i++)
-        // {
-        //     int r = last_frame.data[i * 3];
-        //     int g = last_frame.data[i * 3 + 1];
-        //     int b = last_frame.data[i * 3 + 2];
-        //     std::cout << r << " " << g << " " << b << std::endl;
-        // }
         updateFrame();
         std::cout << "Current frame index: " << m_cur_frame_index << std::endl;
         return m_frames[m_cur_frame_index].data.data();
