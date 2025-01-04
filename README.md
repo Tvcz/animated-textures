@@ -6,7 +6,7 @@ Credit goes to Mike Shah for most of the code in the repository. My changes are 
 
 Animated Textures using GIFs
 
-## YouTube/Dropbox/Drive Link: 
+## Video Presentation: 
 
 https://youtu.be/vCkqORzZeyU
 
@@ -18,8 +18,6 @@ Goal: Add support for using animated GIFs in place of PPM images for OBJ model t
 Result (still frame):
 
 ![image](https://github.com/user-attachments/assets/be7905d5-87cd-4a79-9f65-6567523ad406)
-![image](https://github.com/user-attachments/assets/6c906e8a-1707-4a05-937f-5389b1c3728e)
-
 
 Result (gif):
 
